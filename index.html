@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Will You Be Mine? 💕</title>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Background Music -->
+    <script>
+        // Romantic music URL (using a romantic instrumental)
+        const musicUrl = 'https://cdn.pixabay.com/audio/2022/03/10/audio_4a1f48e6b9.mp3'; // Romantic Piano
+    </script>
     <style>
         * {
             margin: 0;
@@ -519,6 +524,26 @@
     </style>
 </head>
 <body>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_4a1f48e6b9.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Music control button -->
+    <div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+        <button id="musicToggle" style="
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        ">🔇</button>
+    </div>
+
     <!-- Floating hearts -->
     <div id="hearts-container"></div>
     <div id="particles-container"></div>
@@ -552,10 +577,10 @@
                     <strong>Thanks for accepting the proposal!</strong> 🥰<br>
                     You just made me the happiest person alive! 💕<br>
                     Can't wait for all our secret moments together! 😘<br>
-                    <em>You and me, forever and always...</em> 💑
+                    <em>You and me, forever and always...</em> 💖
                 </p>
             </div>
-            <div class="couple-emoji">💑</div>
+            <div class="couple-emoji">👫</div>
         </div>
     </div>
 
@@ -567,6 +592,43 @@
         const successMessage = document.getElementById('successMessage');
         const heartsContainer = document.getElementById('hearts-container');
         const particlesContainer = document.getElementById('particles-container');
+        
+        // Music controls
+        const bgMusic = document.getElementById('bgMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        let isMusicPlaying = false;
+
+        // Start music on first user interaction
+        function startMusic() {
+            if (!isMusicPlaying) {
+                bgMusic.play().then(() => {
+                    isMusicPlaying = true;
+                    musicToggle.textContent = '🔊';
+                }).catch(err => {
+                    console.log('Autoplay prevented:', err);
+                });
+            }
+        }
+
+        // Music toggle button
+        musicToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                musicToggle.textContent = '🔇';
+                isMusicPlaying = false;
+            } else {
+                bgMusic.play();
+                musicToggle.textContent = '🔊';
+                isMusicPlaying = true;
+            }
+        });
+
+        // Try to play music on page load (may be blocked by browser)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Some browsers allow autoplay with user gesture
+            setTimeout(startMusic, 500);
+        });
 
         const wrongMessages = [
             "❌ Wrong answer! Try again! 💔",
@@ -656,6 +718,7 @@
 
         noBtn.addEventListener('click', function(e) {
             e.preventDefault();
+            startMusic(); // Start music on interaction
             wrongAnswer.textContent = wrongMessages[messageIndex];
             messageIndex = (messageIndex + 1) % wrongMessages.length;
             
@@ -668,6 +731,7 @@
 
         yesBtn.addEventListener('click', function(e) {
             e.preventDefault();
+            startMusic(); // Start music on interaction
             proposalContent.style.display = 'none';
             successMessage.style.display = 'block';
             createSparkles();
